@@ -1,0 +1,7 @@
+My first day as a data analyst has started.
+The marketing Manager has asked me for a list of all customers, with their full names and email addresses.
+
+Answer:
+
+SELECT first_name, last_name, email
+FROM customer
