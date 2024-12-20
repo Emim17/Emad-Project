@@ -1,7 +1,25 @@
 My first day as a data analyst has started.
-The marketing Manager has asked me for a list of all customers, with their full names and email addresses.
-
+list of all the payments of customers 322, 346 and 354 where the amount is either less than 2 or greater than 10.
+sort by customer id and amount (high to low)
 Answer:
 
-SELECT first_name, last_name, email
-FROM customer
+SELECT * FROM payment
+WHERE (customer_id = 322 OR customer_id = 346 OR customer_id = 354)
+AND (amount < 2 OR amount > 10)
+ORDER BY customer_id, amount DESC
+
+How many payments have been made on January 26-27 2020 with amount of 1.99-3.99?
+
+ANS:
+SELECT COUNT (*) FROM payment
+WHERE (payment_date BETWEEN '2020-01-26' AND '2020-01-28 00:00')
+AND (amount BETWEEN 1.99 AND 3.99)
+
+There have been 6 complaints from customers about their payments. their customer Id's are (12,25,67,93,123,234).
+The concerned payments are all the payments of these customers with amount of 4.99, 7.99 and 9.99 in January 2020.
+ANS:
+
+SELECT * FROM payment
+WHERE (customer_id IN (12,25,67,93,124,234))
+AND (payment_date BETWEEN '2020-01-01' AND '2020-01-31 23:59')
+AND (amount IN (4.99, 7.99, 9.99))
