@@ -23,3 +23,16 @@ SELECT * FROM payment
 WHERE (customer_id IN (12,25,67,93,124,234))
 AND (payment_date BETWEEN '2020-01-01' AND '2020-01-31 23:59')
 AND (amount IN (4.99, 7.99, 9.99))
+
+In 2020, April 28-30 were the days with the highest revenue.
+Find out what is the highest average income by customer and date in those dates.
+Consider only the days/customers with more than one payment.
+
+ANS:
+SELECT customer_id, DATE(payment_date) AS date,
+ROUND(AVG(amount),2) AS avg_sales
+FROM payment
+WHERE payment_date BETWEEN '2020-04-28' AND '2020-04-30 23:59'
+GROUP BY customer_id, date
+HAVING COUNT(*) >1
+ORDER BY avg_sales DESC;
