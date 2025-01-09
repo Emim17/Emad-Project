@@ -36,3 +36,42 @@ WHERE payment_date BETWEEN '2020-04-28' AND '2020-04-30 23:59'
 GROUP BY customer_id, date
 HAVING COUNT(*) >1
 ORDER BY avg_sales DESC;
+
+
+Flights data:
+Q:
+How many tickets were sold in the following category?
+Low_price ticket (less than 20,000)
+Medium_price ticket (20,000 to 150,000)
+High_price ticket (more than 150,000).
+
+How many high price tickets were sold?
+
+A:
+
+SELECT COUNT(*),
+CASE
+WHEN total_amount<20000 THEN 'Low price ticket'
+WHEN total_amount<150000 THEN 'Mid price ticket'
+ELSE 'High price ticket'
+END as ticket_price
+FROM bookings
+GROUP BY ticket_price
+
+Q:
+How many flights are scheduled in the following seasons?
+Winter (Dec-Feb)
+Spring (Mar-May)
+Summer (June-Aug)
+Fall (Sep-Nov)
+
+A:
+SELECT COUNT(*) AS total_flights,
+CASE
+WHEN EXTRACT (MONTH from scheduled_departure) IN (12,01,02) THEN 'Winter'
+WHEN EXTRACT (MONTH from scheduled_departure) IN (03,04,05) THEN 'Spring'
+WHEN EXTRACT (MONTH from scheduled_departure) IN (06,07,08) THEN 'Summer'
+ELSE 'Fall'
+END AS Season
+FROM flights
+GROUP BY Season
