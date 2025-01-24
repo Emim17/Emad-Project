@@ -75,3 +75,27 @@ ELSE 'Fall'
 END AS Season
 FROM flights
 GROUP BY Season
+
+Q:
+An airline company wants to know which category sells most tickets:
+- Business
+- Economy
+- Comfort
+
+A:
+SELECT fare_conditions AS class, COUNT(*) AS tickets_sold FROM flights AS f
+INNER JOIN seats AS s
+ON s.aircraft_code = f.aircraft_code
+INNER JOIN boarding_passes AS bp
+ON bp.flight_id = f.flight_id
+AND bp.seat_no = s.seat_no
+GROUP BY class
+ORDER BY tickets_sold DESC
+
+Note*: 
+boarding_passes and flights: This join connects each boarding pass to its corresponding flight using the flight_id.
+It ensures that each boarding pass is matched with the correct flight details.
+flights and seats: This join links flights to seats based on the aircraft_code
+and matches the seat_no from the boarding_passes with the seat_no in the seats table. This is crucial as it ensures
+that the seat number is associated with the correct aircraft, thus accurately aligning the seat number with its fare class.
+
