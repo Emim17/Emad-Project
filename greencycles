@@ -99,3 +99,21 @@ flights and seats: This join links flights to seats based on the aircraft_code
 and matches the seat_no from the boarding_passes with the seat_no in the seats table. This is crucial as it ensures
 that the seat number is associated with the correct aircraft, thus accurately aligning the seat number with its fare class.
 
+Q:
+return all customers names and emails that have spent a total of more than 30$
+
+A:
+SELECT first_name, last_name, email FROM customer
+WHERE customer_id IN (SELECT customer_id FROM payment
+GROUP BY customer_id
+HAVING SUM(amount) >30)
+
+Q: return all customers names that are from California and spent a total of more than 100$
+
+A:
+SELECT first_name, last_name FROM customer
+WHERE address_id IN (SELECT address_id FROM address
+WHERE district = 'California') AND
+customer_id IN (SELECT customer_id FROM payment
+GROUP BY customer_id
+HAVING SUM(amount) >100)
