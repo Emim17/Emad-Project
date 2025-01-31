@@ -11,5 +11,32 @@ ORDER BY replacement_cost
 - high: 25.00 - 29.99
 Question: How many films have a replacement cost in the "low" group?
 
-SELECT CASE
-WHEN replacement_cost
+A:
+SELECT 
+CASE
+WHEN replacement_cost >=9.99 AND replacement_cost <=19.99 THEN 'low'
+WHEN replacement_cost >=20 AND replacement_cost <=24.99 THEN 'medium'
+WHEN replacement_cost >=25 AND replacement_cost <=29.99 THEN 'high'
+END AS rp_category,
+COUNT(*) AS no_of_films
+FROM film
+GROUP BY rp_category
+ORDER BY no_of_films
+
+3. Task: Create a list of the film titles including their title, length, and category name ordered descendingly by length.
+Filter the results to only the movies in the category 'Drama' or 'Sports'.
+Question: In which category is the longest film and how long is it?
+
+A:
+SELECT title, length, name AS category FROM film f
+INNER JOIN film_category fc ON
+f.film_id=fc.film_id
+INNER JOIN category c ON
+fc.category_id = c.category_id
+WHERE name IN('Drama', 'Sports')
+ORDER BY length DESC
+
+4. Task: Create an overview of how many movies (titles) there are in each category (name).
+Question: Which category (name) is the most common among the films?
+
+
