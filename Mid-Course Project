@@ -1,1 +1,15 @@
+1. Task: Create a list of all the different (distinct) replacement costs of the films.
+Question: What's the lowest replacement cost?
 
+A:
+SELECT DISTINCT(replacement_cost) FROM film
+ORDER BY replacement_cost
+
+2. Task: Write a query that gives an overview of how many films have replacement costs in the following cost ranges
+- low: 9.99 - 19.99
+- medium: 20.00 - 24.99
+- high: 25.00 - 29.99
+Question: How many films have a replacement cost in the "low" group?
+
+SELECT CASE
+WHEN replacement_cost
