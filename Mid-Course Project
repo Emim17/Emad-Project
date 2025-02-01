@@ -39,4 +39,83 @@ ORDER BY length DESC
 4. Task: Create an overview of how many movies (titles) there are in each category (name).
 Question: Which category (name) is the most common among the films?
 
+A:
+SELECT name AS category, COUNT(*) FROM film f
+INNER JOIN film_category fc ON
+f.film_id=fc.film_id
+INNER JOIN category c ON
+fc.category_id = c.category_id
+GROUP BY category
+ORDER BY COUNT(*) DESC
+
+5. Task: Create an overview of the actors' first and last names and in how many movies they appear in.
+Question: Which actor is part of most movies??
+
+A:
+SELECT first_name, last_name, COUNT(*) FROM film_actor fa
+INNER JOIN actor a ON
+fa.actor_id=a.actor_id
+GROUP BY first_name, last_name
+ORDER BY COUNT(*) DESC
+
+6. Task: Create an overview of the addresses that are not associated to any customer.
+Question: How many addresses are that?
+
+A:
+SELECT * FROM address a
+LEFT JOIN customer c ON
+a.address_id = c.address_id
+WHERE customer_id IS null
+
+7. Task: Create the overview of the sales to determine from which city (we are interested in the city in which the customer lives, not where the store is) most sales occur.
+Question: What city is that and how much is the amount?
+
+A:
+SELECT city, SUM(amount) AS total_sales FROM payment p
+INNER JOIN customer c ON
+p.customer_id = c.customer_id
+INNER JOIN address a ON
+a.address_id = c.address_id
+INNER JOIN city ON
+city.city_id=a.city_id
+GROUP BY city
+ORDER BY total_sales DESC
+
+8. Task: Create an overview of the revenue (sum of amount) grouped by a column in the format "country, city".
+Question: Which country, city has the least sales?
+
+A:
+SELECT country ||', '|| city AS location, SUM(amount) AS total_sales
+FROM city ci
+INNER JOIN country co ON
+ci.country_id=co.country_id
+INNER JOIN address ad ON
+ad.city_id = ci.city_id
+INNER JOIN customer cu ON
+cu.address_id = ad.address_id
+INNER JOIN payment p ON
+p.customer_id=cu.customer_id
+GROUP BY location
+ORDER BY total_sales
+
+9. Task: Create a list with the average-sales-per-customer of each staff.
+Question: Which staff_id makes on average more revenue per customer?
+
+A:
+SELECT staff_id, ROUND(AVG(sales_per_customer),2) AS avg_sales_per_customer FROM
+(SELECT staff_id, customer_id, SUM(amount) AS sales_per_customer
+FROM payment
+GROUP BY staff_id, customer_id
+ORDER BY staff_id, customer_id) AS staff_sales
+GROUP BY staff_id
+ORDER BY avg_sales_per_customer DESC
+
+
+
+
+
+
+
+
+
 
