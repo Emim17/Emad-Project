@@ -193,8 +193,51 @@ ca.category_id=fc.category_id
 ORDER BY category, payment_id
 
 
+14. Task: Create a list with the top overall revenue of a film title (sum of amount per title) for each category (name).
+Question: Which is the top-performing film in the animation category?
 
-
+A:
+SELECT category, title, MAX(total_amount) AS best_sellers
+FROM
+--
+(SELECT name AS category, title, SUM(amount) AS total_amount
+FROM payment pa
+INNER JOIN rental re ON
+pa.rental_id=re.rental_id
+INNER JOIN inventory inv ON
+inv.inventory_id=re.inventory_id
+INNER JOIN film fi ON
+fi.film_id = inv.film_id
+INNER JOIN film_category fc ON
+fc.film_id = inv.film_id
+INNER JOIN category ca ON
+ca.category_id=fc.category_id
+GROUP BY category, title
+ORDER BY total_amount DESC) table_total_amount1
+--
+GROUP BY category, title
+--
+HAVING MAX(total_amount) = (SELECT MAX(total_amount) FROM
+(
+(SELECT name AS category, title, SUM(amount) AS total_amount
+FROM payment pa
+INNER JOIN rental re ON
+pa.rental_id=re.rental_id
+INNER JOIN inventory inv ON
+inv.inventory_id=re.inventory_id
+INNER JOIN film fi ON
+fi.film_id = inv.film_id
+INNER JOIN film_category fc ON
+fc.film_id = inv.film_id
+INNER JOIN category ca ON
+ca.category_id=fc.category_id
+GROUP BY category, title
+ORDER BY total_amount DESC)	
+) AS table_total_amount2
+WHERE table_total_amount1.category=table_total_amount2.category
+GROUP BY category)
+--
+ORDER BY best_sellers DESC
 
 
 
