@@ -15,8 +15,8 @@ A:
 SELECT 
 CASE
 WHEN replacement_cost >=9.99 AND replacement_cost <=19.99 THEN 'low'
-WHEN replacement_cost >=20 AND replacement_cost <=24.99 THEN 'medium'
-WHEN replacement_cost >=25 AND replacement_cost <=29.99 THEN 'high'
+WHEN replacement_cost BETWEEN 20 AND 24.99 'medium'
+WHEN replacement_cost  >24.99 THEN 'high'
 END AS rp_category,
 COUNT(*) AS no_of_films
 FROM film
@@ -28,10 +28,11 @@ Filter the results to only the movies in the category 'Drama' or 'Sports'.
 Question: In which category is the longest film and how long is it?
 
 A:
-SELECT title, length, name AS category FROM film f
-INNER JOIN film_category fc ON
+SELECT title, length, name AS category
+FROM film f
+LEFT JOIN film_category fc ON
 f.film_id=fc.film_id
-INNER JOIN category c ON
+LEFT JOIN category c ON
 fc.category_id = c.category_id
 WHERE name IN('Drama', 'Sports')
 ORDER BY length DESC
@@ -52,7 +53,8 @@ ORDER BY COUNT(*) DESC
 Question: Which actor is part of most movies??
 
 A:
-SELECT first_name, last_name, COUNT(*) FROM film_actor fa
+SELECT first_name, last_name, COUNT(*)
+FROM film_actor fa
 INNER JOIN actor a ON
 fa.actor_id=a.actor_id
 GROUP BY first_name, last_name
@@ -67,16 +69,17 @@ LEFT JOIN customer c ON
 a.address_id = c.address_id
 WHERE customer_id IS null
 
-7. Task: Create the overview of the sales to determine from which city (we are interested in the city in which the customer lives, not where the store is) most sales occur.
+7. Task: Create the overview of the sales to determine from which city 
+(we are interested in the city in which the customer lives, not where the store is) most sales occur.
 Question: What city is that and how much is the amount?
 
 A:
 SELECT city, SUM(amount) AS total_sales FROM payment p
-INNER JOIN customer c ON
+LEFT JOIN customer c ON
 p.customer_id = c.customer_id
-INNER JOIN address a ON
+LEFT JOIN address a ON
 a.address_id = c.address_id
-INNER JOIN city ON
+LEFT JOIN city ON
 city.city_id=a.city_id
 GROUP BY city
 ORDER BY total_sales DESC
@@ -87,13 +90,13 @@ Question: Which country, city has the least sales?
 A:
 SELECT country ||', '|| city AS location, SUM(amount) AS total_sales
 FROM city ci
-INNER JOIN country co ON
+LEFT JOIN country co ON
 ci.country_id=co.country_id
-INNER JOIN address ad ON
+LEFT JOIN address ad ON
 ad.city_id = ci.city_id
-INNER JOIN customer cu ON
+LEFT JOIN customer cu ON
 cu.address_id = ad.address_id
-INNER JOIN payment p ON
+LEFT JOIN payment p ON
 p.customer_id=cu.customer_id
 GROUP BY location
 ORDER BY total_sales
@@ -105,8 +108,7 @@ A:
 SELECT staff_id, ROUND(AVG(sales_per_customer),2) AS avg_sales_per_customer FROM
 (SELECT staff_id, customer_id, SUM(amount) AS sales_per_customer
 FROM payment
-GROUP BY staff_id, customer_id
-ORDER BY staff_id, customer_id) AS staff_sales
+GROUP BY staff_id, customer_id) AS staff_sales
 GROUP BY staff_id
 ORDER BY avg_sales_per_customer DESC
 
@@ -137,7 +139,7 @@ WHERE length > (SELECT ROUND(AVG(length),2) AS avg_length
 			        	GROUP BY replacement_cost)
 ORDER BY length
 
-12. Taske: Create a list that shows the "average customer lifetime value" grouped by the different districts.
+12. Task: Create a list that shows the "average customer lifetime value" grouped by the different districts.
 Example:
 If there are two customers in "District 1" where one customer has a total (lifetime)
 spent of $1000 and the second customer has a total spent of $2000 then the "average customer lifetime spent"
@@ -171,24 +173,24 @@ A:
 SELECT payment_id, name AS category, amount,
 (SELECT SUM(amount) AS category_income
 FROM payment pa2
-INNER JOIN rental re2 ON
+LEFT JOIN rental re2 ON
 pa2.rental_id=re2.rental_id
-INNER JOIN inventory inv2 ON
+LEFT JOIN inventory inv2 ON
 inv2.inventory_id=re2.inventory_id
-INNER JOIN film_category fc2 ON
+LEFT JOIN film_category fc2 ON
 fc2.film_id = inv2.film_id
-INNER JOIN category ca2 ON
+LEFT JOIN category ca2 ON
 ca2.category_id=fc2.category_id
 WHERE ca2.name=ca.name
 GROUP BY name)
 FROM payment pa
-INNER JOIN rental re ON
+LEFT JOIN rental re ON
 pa.rental_id=re.rental_id
-INNER JOIN inventory inv ON
+LEFT JOIN inventory inv ON
 inv.inventory_id=re.inventory_id
-INNER JOIN film_category fc ON
+LEFT JOIN film_category fc ON
 fc.film_id = inv.film_id
-INNER JOIN category ca ON
+LEFT JOIN category ca ON
 ca.category_id=fc.category_id
 ORDER BY category, payment_id
 
