@@ -1,0 +1,51 @@
+Task 1.1
+In your company there hasn't been a database table with all the employee information yet.
+You need to set up the table called employees in the following way: emp_id, first_name, last_name, job_position, salary, start_date, birth_date, store_id, department_id
+
+There should be NOT NULL constraints for the following columns: first_name, last_name , job_position, start_date DATE, birth_date DATE
+
+A:
+CREATE TABLE employees (
+emp_id SERIAL PRIMARY KEY,
+first_name TEXT NOT NULL,
+last_name TEXT NOT NULL,
+job_position TEXT NOT NULL,
+salary DECIMAL(8,2),
+start_date DATE NOT NULL,
+birth_date DATE NOT NULL,
+store_id INT REFERENCES store(store_id),
+department_id INT,
+manager_id INT
+);
+
+Task 1.2
+
+Set up an additional table called departments in the following way: department_id, department, division.
+Additionally no column should allow nulls
+
+A:
+CREATE TABLE departments (
+department_id SERIAL PRIMARY KEY,
+department TEXT NOT NULL,
+division TEXT NOT NULL);
+
+TASK 2
+Alter the employees table in the following way:
+- Set the column department_id to not null.
+- Add a default value of CURRENT_DATE to the column start_date.
+- Add the column end_date with an appropriate data type (one that you think makes sense).
+- Add a constraint called birth_check that doesn't allow birth dates that are in the future.
+- Rename the column job_position to position_title.
+
+A:
+ALTER TABLE employees 
+ALTER COLUMN department_id SET NOT NULL,
+ALTER COLUMN start_date SET DEFAULT CURRENT_DATE,
+ADD COLUMN end_date DATE,
+ADD CONSTRAINT check_end_after_start
+CHECK (end_date IS NULL OR end_date>=start_date),
+ADD CONSTRAINT birth_check
+CHECK (birth_date < CURRENT_DATE);
+
+ALTER TABLE employees
+RENAME job_position TO position_title;
