@@ -230,5 +230,32 @@ A:
 SELECT emp_id, salary, start_date,
 SUM(salary) OVER(ORDER BY start_date) AS running_total_of_salary
 FROM v_employees_info
-WHERE is_active = 'TRUE' OR end_date>'2018-12-31'
+WHERE is_active = 'TRUE' OR end_date>'2018-12-31' ----------------------Edit
+
+TASK 11.1
+Write a query that outputs only the top earner per position_title including first_name and position_title and their salary.
+Q: What is the top earner with the position_title SQL Analyst?
+
+A:
+SELECT
+first_name,
+position_title,
+salary
+FROM employees e1
+WHERE salary = (SELECT MAX(salary)
+			   FROM employees e2
+			   WHERE e1.position_title=e2.position_title)
+
+Task 11.2
+Add also the average salary per position_title.
+
+A:
+SELECT first_name, position_title, salary,avg_role_salary FROM
+(SELECT *,
+FIRST_VALUE(salary) OVER(PARTITION BY position_title ORDER BY salary DESC),
+ROUND(AVG(salary) OVER(PARTITION BY position_title),2) AS avg_role_salary
+FROM employees) as t1
+WHERE salary=first_value
+ORDER BY salary DESC
+
 
